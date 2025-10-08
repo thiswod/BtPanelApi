@@ -5,10 +5,10 @@ using System.Text;
 namespace BtPanelApi
 {
     /// <summary>
-    /// BtPanel Api
+    /// BtPanel Api 基类
     /// </summary>
-    /// <param name="BtPanel">面板URL地址</param>
-    /// <param name="BtKey">ApiKey</param>
+    /// <param name="BtPanel">BtPanel地址</param>
+    /// <param name="BtKey">BtPanel密钥</param>
     public class BtPanel(string BtPanel,string BtKey)
     {
         /// <summary>
@@ -55,6 +55,22 @@ namespace BtPanelApi
         {
             HttpRequestClass http = new HttpRequestClass();
             http.Open(BtPanel + "/config?action=" + action, HttpMethod.Post);
+            var PostData = CreateForm(Form);
+            http.Send(PostData);
+            return http;
+        }
+        public HttpRequestClass SendFiles(string action)
+        {
+            HttpRequestClass http = new HttpRequestClass();
+            http.Open(BtPanel + "/files?action=" + action, HttpMethod.Post);
+            var PostData = CreateForm();
+            http.Send(PostData);
+            return http;
+        }
+        public HttpRequestClass SendFiles(string action,Dictionary<string,string> Form)
+        {
+            HttpRequestClass http = new HttpRequestClass();
+            http.Open(BtPanel + "/files?action=" + action, HttpMethod.Post);
             var PostData = CreateForm(Form);
             http.Send(PostData);
             return http;
