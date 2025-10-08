@@ -164,17 +164,20 @@ namespace BtPanelApi.site
         /// </summary>
         /// <returns>默认页面文件内容</returns>
         /// <exception cref="Exception">获取默认页面内容失败</exception>
-        public FileBody GetDefaultPage() => GetFileBody("/www/server/panel/data/defaultDoc.html");
-
+        public FileBody GetDefaultPage()
+        {
+            return GetFileBody("/www/server/panel/data/defaultDoc.html");
+        }
         /// <summary>
         /// 设置默认页面内容
         /// </summary>
         /// <param name="data">默认页面文件内容</param>
-        /// <param name="encoding">文件编码</param>
         /// <returns>是否设置成功</returns>
         /// <exception cref="Exception">设置默认页面内容失败</exception>
-        public bool SetDefaultPage(string data, string encoding = "utf-8") => SaveFileBody("/www/server/panel/data/defaultDoc.html", data, encoding);
-
+        public bool SetDefaultPage(string data)
+        {
+            return SaveFileBody("/www/server/panel/data/defaultDoc.html",data);
+        }
         /// <summary>
         /// 获取404页面内容
         /// </summary>
