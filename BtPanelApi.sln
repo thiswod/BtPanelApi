@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36511.14 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BtPanelApi", "BtPanelApi.csproj", "{ADAE943B-4F8B-4CD8-B4AE-37EED3039982}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BtApiTest", "..\BtApiTest\BtApiTest.csproj", "{B9A84F9B-B083-4DC3-BC0C-16E2013FA161}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ADAE943B-4F8B-4CD8-B4AE-37EED3039982}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADAE943B-4F8B-4CD8-B4AE-37EED3039982}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADAE943B-4F8B-4CD8-B4AE-37EED3039982}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADAE943B-4F8B-4CD8-B4AE-37EED3039982}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9A84F9B-B083-4DC3-BC0C-16E2013FA161}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9A84F9B-B083-4DC3-BC0C-16E2013FA161}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9A84F9B-B083-4DC3-BC0C-16E2013FA161}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9A84F9B-B083-4DC3-BC0C-16E2013FA161}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0C525C76-4A1B-4C92-80E0-FF699A7D6E15}
+	EndGlobalSection
+EndGlobal
