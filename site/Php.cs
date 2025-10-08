@@ -120,71 +120,125 @@ namespace BtPanelApi.site
                 throw new Exception("保存文件内容失败:" + ex.Message);
             }
         }
+        // 通用文件操作辅助方法
+        private FileBody GetPageContent(string filePath, string errorMessagePrefix)
+        {
+            try
+            {
+                return GetFileBody(filePath);
+            }
+            catch(Exception ex)
+            {
+                throw new Exception($"{errorMessagePrefix}:{ex.Message}");
+            }
+        }
+
+        private bool SetPageContent(string filePath, string data, string encoding, string errorMessagePrefix)
+        {
+            try
+            {
+                return SaveFileBody(filePath, data, encoding);
+            }
+            catch(Exception ex)
+            {
+                throw new Exception($"{errorMessagePrefix}:{ex.Message}");
+            }
+        }
+
         /// <summary>
         /// 获取默认页面内容
         /// </summary>
         /// <returns>默认页面文件内容</returns>
         /// <exception cref="Exception">获取默认页面内容失败</exception>
-        public FileBody GetDefaultPage()
-        {
-            return GetFileBody("/www/server/panel/data/defaultDoc.html");
-        }
+        public FileBody GetDefaultPage() => GetFileBody("/www/server/panel/data/defaultDoc.html");
+
         /// <summary>
         /// 设置默认页面内容
         /// </summary>
         /// <param name="data">默认页面文件内容</param>
+        /// <param name="encoding">文件编码</param>
         /// <returns>是否设置成功</returns>
         /// <exception cref="Exception">设置默认页面内容失败</exception>
-        public bool SetDefaultPage(string data)
-        {
-            return SaveFileBody("/www/server/panel/data/defaultDoc.html",data);
-        }
+        public bool SetDefaultPage(string data, string encoding = "utf-8") => SaveFileBody("/www/server/panel/data/defaultDoc.html", data, encoding);
+
         /// <summary>
         /// 获取404页面内容
         /// </summary>
         /// <returns>404页面文件内容</returns>
         /// <exception cref="Exception">获取404页面内容失败</exception>
-        public FileBody Get404Page()
-        {
-            try
-            {
-                return GetFileBody("/www/server/panel/data/404.html");
-            }
-            catch(Exception ex)
-            {
-                throw new Exception("获取404页面内容失败:" + ex.Message);
-            }
-        }
+        public FileBody Get404Page() => GetPageContent("/www/server/panel/data/404.html", "获取404页面内容失败");
+
         /// <summary>
         /// 设置404页面内容
         /// </summary>
         /// <param name="data">404页面文件内容</param>
+        /// <param name="encoding">文件编码</param>
         /// <returns>是否设置成功</returns>
         /// <exception cref="Exception">设置404页面内容失败</exception>
-        public bool Set404Page(string data)
-        {
-            try
-            {
-                return SaveFileBody("/www/server/panel/data/404.html",data);
-            }
-            catch(Exception ex)
-            {
-                throw new Exception("设置404页面内容失败:" + ex.Message);
-            }
-        }
+        public bool Set404Page(string data, string encoding = "utf-8") => SetPageContent("/www/server/panel/data/404.html", data, encoding, "设置404页面内容失败");
+
         public bool Get404PageStatus()
         {
             try
             {
                 HttpRequestClass http = SendSite("get_404_config");
                 dynamic dynamic = EasyJson.ParseJsonToDynamic(http.GetResponse().Body);
-                return dynamic.status==1?true:false;
+                return dynamic.status == 1;
             }
             catch(Exception ex)
             {
                 throw new Exception("获取404页面状态失败:" + ex.Message);
             }
         }
+
+        public bool Set404PageStatus(bool status)
+        {
+            try
+            {
+                HttpRequestClass http = SendSite("set_404_config", new Dictionary<string, string>()
+                {
+                    ["status"] = status ? "1" : "0"
+                });
+                dynamic dynamic = EasyJson.ParseJsonToDynamic(http.GetResponse().Body);
+                return dynamic.status;
+            }
+            catch(Exception ex)
+            {
+                throw new Exception("设置404页面状态失败:" + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// 获取无网站页面内容
+        /// </summary>
+        /// <returns>无网站页面文件内容</returns>
+        /// <exception cref="Exception">获取无网站页面内容失败</exception>
+        public FileBody GetNoWebSitePage() => GetPageContent("/www/server/nginx/html/index.html", "获取无网站页面内容失败");
+
+        /// <summary>
+        /// 设置无网站页面内容
+        /// </summary>
+        /// <param name="data">无网站页面文件内容</param>
+        /// <param name="encoding">文件编码</param>
+        /// <returns>是否设置成功</returns>
+        /// <exception cref="Exception">设置无网站页面内容失败</exception>
+        public bool SetNoWebSitePage(string data, string encoding = "utf-8") => SetPageContent("/www/server/nginx/html/index.html", data, encoding, "设置无网站页面内容失败");
+
+        /// <summary>
+        /// 获取网站停用后提示页面内容
+        /// </summary>
+        /// <returns>网站停用后提示页面文件内容</returns>
+        /// <exception cref="Exception">获取网站停用后提示页面内容失败</exception>
+        public FileBody GetStopPage() => GetPageContent("/www/server/stop/index.html", "获取网站停用后提示页面内容失败");
+
+        /// <summary>
+        /// 设置网站停用后提示页面内容
+        /// </summary>
+        /// <param name="data">网站停用后提示页面文件内容</param>
+        /// <param name="encoding">文件编码</param>
+        /// <returns>是否设置成功</returns>
+        /// <exception cref="Exception">设置网站停用后提示页面内容失败</exception>
+        public bool SetStopPage(string data, string encoding = "utf-8") => SetPageContent("/www/server/stop/index.html", data, encoding, "设置网站停用后提示页面内容失败");
         HttpRequestClass SendSite(string action)
         {
             HttpRequestClass http = new HttpRequestClass();
