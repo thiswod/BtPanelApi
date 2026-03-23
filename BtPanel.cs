@@ -1,6 +1,7 @@
 ﻿using BtPanelApi.site;
 using System.Security.Cryptography;
 using System.Text;
+using WodToolKit.Http;
 
 namespace BtPanelApi
 {
