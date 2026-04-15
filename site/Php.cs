@@ -6,7 +6,7 @@ namespace BtPanelApi.site
     /// <summary>
     /// 网站管理 PHP网站类
     /// </summary>
-    /// <param name="BtPanel">BtPanel地址</param>
+    /// <param name="BtPanel">BtPanel地址(http://127.0.0.1:8888)结尾不带"/"</param>
     /// <param name="BtKey">BtPanel密钥</param>
     public class Php(string BtPanel, string BtKey) : BtPanel(BtPanel, BtKey)
     {
@@ -23,11 +23,12 @@ namespace BtPanelApi.site
                 List<Types> types = EasyJson.ParseJsonObject<List<Types>>(Result.GetResponse().Body);
                 return types;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception("获取网站分类分组失败:" + ex.Message);
             }
         }
+
         /// <summary>
         /// 获取PHPCli版本
         /// </summary>
@@ -41,11 +42,12 @@ namespace BtPanelApi.site
                 PhpCliVersion PhpCliVersion = EasyJson.ParseJsonObject<PhpCliVersion>(Result.GetResponse().Body);
                 return PhpCliVersion;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception("获取PHPCli版本失败:" + ex.Message);
             }
         }
+
         /// <summary>
         /// 设置PHPCli版本
         /// </summary>
@@ -63,11 +65,12 @@ namespace BtPanelApi.site
                 dynamic dynamic = EasyJson.ParseJsonToDynamic(Result.GetResponse().Body);
                 return dynamic.status;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception("设置PHP版本失败:" + ex.Message);
             }
         }
+
         /// <summary>
         /// 获取文件内容
         /// </summary>
@@ -76,7 +79,7 @@ namespace BtPanelApi.site
         /// <exception cref="Exception">获取文件内容失败</exception>
         public FileBody GetFileBody(string path)
         {
-            var Result = SendFiles("GetFileBody",new Dictionary<string, string>()
+            var Result = SendFiles("GetFileBody", new Dictionary<string, string>()
             {
                 ["path"] = path
             });
@@ -85,11 +88,12 @@ namespace BtPanelApi.site
                 FileBody FileBody = EasyJson.ParseJsonObject<FileBody>(Result.GetResponse().Body);
                 return FileBody;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception("获取文件内容失败:" + ex.Message);
             }
         }
+
         /// <summary>
         /// 保存文件内容
         /// </summary>
@@ -98,7 +102,7 @@ namespace BtPanelApi.site
         /// <param name="encoding">文件编码</param>
         /// <returns>是否保存成功</returns>
         /// <exception cref="Exception">保存文件内容失败</exception>
-        public bool SaveFileBody(string path,string data,string encoding = "utf-8")
+        public bool SaveFileBody(string path, string data, string encoding = "utf-8")
         {
             var Result = SendFiles("SaveFileBody", new Dictionary<string, string>()
             {
@@ -111,11 +115,12 @@ namespace BtPanelApi.site
                 dynamic dynamic = EasyJson.ParseJsonToDynamic(Result.GetResponse().Body);
                 return dynamic.status;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception("保存文件内容失败:" + ex.Message);
             }
         }
+
         /// <summary>
         /// 通用获取页面内容方法
         /// </summary>
@@ -129,11 +134,12 @@ namespace BtPanelApi.site
             {
                 return GetFileBody(filePath);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception($"{errorMessagePrefix}:{ex.Message}");
             }
         }
+
         /// <summary>
         /// 通用保存页面内容方法
         /// </summary>
@@ -149,7 +155,7 @@ namespace BtPanelApi.site
             {
                 return SaveFileBody(filePath, data, encoding);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception($"{errorMessagePrefix}:{ex.Message}");
             }
@@ -164,6 +170,7 @@ namespace BtPanelApi.site
         {
             return GetFileBody("/www/server/panel/data/defaultDoc.html");
         }
+
         /// <summary>
         /// 设置默认页面内容
         /// </summary>
@@ -172,8 +179,9 @@ namespace BtPanelApi.site
         /// <exception cref="Exception">设置默认页面内容失败</exception>
         public bool SetDefaultPage(string data)
         {
-            return SaveFileBody("/www/server/panel/data/defaultDoc.html",data);
+            return SaveFileBody("/www/server/panel/data/defaultDoc.html", data);
         }
+
         /// <summary>
         /// 获取404页面内容
         /// </summary>
@@ -198,7 +206,7 @@ namespace BtPanelApi.site
                 dynamic dynamic = EasyJson.ParseJsonToDynamic(http.GetResponse().Body);
                 return dynamic.status == 1;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception("获取404页面状态失败:" + ex.Message);
             }
@@ -215,7 +223,7 @@ namespace BtPanelApi.site
                 dynamic dynamic = EasyJson.ParseJsonToDynamic(http.GetResponse().Body);
                 return dynamic.status;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception("设置404页面状态失败:" + ex.Message);
             }
@@ -236,6 +244,7 @@ namespace BtPanelApi.site
         /// <returns>是否设置成功</returns>
         /// <exception cref="Exception">设置无网站页面内容失败</exception>
         public bool SetNoWebSitePage(string data, string encoding = "utf-8") => SetPageContent("/www/server/nginx/html/index.html", data, encoding, "设置无网站页面内容失败");
+
         /// <summary>
         /// 获取网站停用后提示页面内容
         /// </summary>
@@ -251,8 +260,8 @@ namespace BtPanelApi.site
         /// <returns>是否设置成功</returns>
         /// <exception cref="Exception">设置网站停用后提示页面内容失败</exception>
         public bool SetStopPage(string data, string encoding = "utf-8") => SetPageContent("/www/server/stop/index.html", data, encoding, "设置网站停用后提示页面内容失败");
+
         /// <summary>
-        /// 
         /// 获取默认站点
         /// </summary>
         /// <returns>默认网站信息</returns>
@@ -263,6 +272,7 @@ namespace BtPanelApi.site
             DefaultWebSite defaultWebSite = EasyJson.ParseJsonObject<DefaultWebSite>(http.GetResponse().Body);
             return defaultWebSite;
         }
+
         /// <summary>
         /// 设置默认站点
         /// </summary>
@@ -273,17 +283,20 @@ namespace BtPanelApi.site
         {
             HttpRequestClass http = SendSite("SetDefaultSite", new Dictionary<string, string>()
             {
-                {"name" , defaultSite}
+                ["name"] = defaultSite
             });
+
             try
             {
                 dynamic dynamic = EasyJson.ParseJsonToDynamic(http.GetResponse().Body);
                 return dynamic.status;
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 throw new Exception("设置默认网站失败:" + ex.Message);
             }
         }
+
         /// <summary>
         /// 获取HTTPS防窜站模式
         /// </summary>
@@ -294,25 +307,21 @@ namespace BtPanelApi.site
             HttpRequestClass http = SendSite("get_https_mode");
             try
             {
-                // 直接获取响应的字符串内容
                 string responseBody = http.GetResponse().Body;
-                
-                // 尝试将字符串解析为布尔值
+
                 if (bool.TryParse(responseBody, out bool result))
                 {
                     return result;
                 }
-                else
-                {
-                    // 如果解析失败，抛出异常并包含原始响应内容
-                    throw new Exception($"获取https模式失败: 无法将响应 '{responseBody}' 解析为布尔值");
-                }
+
+                throw new Exception($"获取https模式失败: 无法将响应 '{responseBody}' 解析为布尔值");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception("获取https模式失败:" + ex.Message);
             }
         }
+
         /// <summary>
         /// 切换HTTPS防窜站模式
         /// </summary>
@@ -326,11 +335,13 @@ namespace BtPanelApi.site
             {
                 dynamic dynamic = EasyJson.ParseJsonToDynamic(http.GetResponse().Body);
                 return dynamic.status;
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 throw new Exception("设置https模式失败:" + ex.Message);
             }
         }
+
         /// <summary>
         /// 获取SSL协议版本
         /// </summary>
@@ -343,11 +354,13 @@ namespace BtPanelApi.site
             {
                 TLSversion tLSversion = EasyJson.ParseJsonObject<TLSversion>(http.GetResponse().Body);
                 return tLSversion;
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 throw new Exception("获取ssl协议失败:" + ex.Message);
             }
         }
+
         /// <summary>
         /// 设置SSL协议版本
         /// </summary>
@@ -356,20 +369,22 @@ namespace BtPanelApi.site
         /// <exception cref="Exception">设置ssl协议失败</exception>
         public bool SetSslProtocol(string[] tls)
         {
-            Dictionary<string, string> tlsDict = new Dictionary<string, string>() {
-                {"use_protocols",string.Join(",", tls) }
+            Dictionary<string, string> tlsDict = new Dictionary<string, string>()
+            {
+                ["use_protocols"] = string.Join(",", tls)
             };
             HttpRequestClass http = SendSite("set_ssl_protocol", tlsDict);
             try
             {
                 dynamic dynamic = EasyJson.ParseJsonToDynamic(http.GetResponse().Body);
                 return dynamic.status;
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 throw new Exception("设置ssl协议失败:" + ex.Message);
             }
-            return false;
         }
+
         /// <summary>
         /// 获取cdn ip设置
         /// </summary>
@@ -382,23 +397,54 @@ namespace BtPanelApi.site
             {
                 CdnIpSettings cdnIpSettings = EasyJson.ParseJsonObject<CdnIpSettings>(http.GetResponse().Body);
                 return cdnIpSettings;
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 throw new Exception("获取cdn ip设置失败:" + ex.Message);
             }
         }
+
+        /// <summary>
+        /// 创建默认配置文件
+        /// </summary>
+        /// <exception cref="Exception">获取创建默认配置文件失败</exception>
         public void CreateDefaultConf()
         {
             HttpRequestClass http = SendSite("create_default_conf");
             try
             {
-                
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception("获取创建默认配置文件失败:" + ex.Message);
             }
         }
+
+        /// <summary>
+        /// 获取网络信息
+        /// </summary>
+        /// <returns>网络信息</returns>
+        /// <exception cref="Exception">获取网络信息失败</exception>
+        public NetWorkInfo GetNetWork()
+        {
+            HttpRequestClass http = SendSite("get_network");
+            try
+            {
+                NetWorkInfo netWorkInfo = EasyJson.ParseJsonObject<NetWorkInfo>(http.GetResponse().Body);
+                return netWorkInfo;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("获取网络信息失败:" + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// 发送网站请求
+        /// </summary>
+        /// <param name="action">请求动作</param>
+        /// <returns>请求结果</returns>
+        /// <exception cref="Exception">发送网站请求失败</exception>
         HttpRequestClass SendSite(string action)
         {
             HttpRequestClass http = new HttpRequestClass();
@@ -407,6 +453,7 @@ namespace BtPanelApi.site
             http.Send(PostData);
             return http;
         }
+
         /// <summary>
         /// 发送网站请求
         /// </summary>
@@ -422,165 +469,7 @@ namespace BtPanelApi.site
             http.Send(PostData);
             return http;
         }
-
-    }
-    /// <summary>
-    /// 创建默认配置文件
-    /// </summary>
-    public class CreateDefaultConf
-    {
-        public bool page_404 { get; set; }
-        public bool page_index { get; set; }
-        public bool log_split { get; set; }
-        public bool cdn_recursive { get; set; }
-        public bool cdn_ip { get; set; }
-        public string log_path { get; set; }
-    }
-    /// <summary>
-    /// cdn ip设置
-    /// </summary>
-    public class CdnIpSettings
-    {
-        /// <summary>
-        /// 是否开启递归查询
-        /// </summary>
-        public bool cdn_recursive { get; set; }
-        /// <summary>
-        /// 白名单IP
-        /// </summary>
-        public string white_ips { get; set; }
-        /// <summary>
-        /// 是否开启CDN IP
-        /// </summary>
-        public bool cdn_ip { get; set; }
-        /// <summary>
-        /// CDN头信息
-        /// </summary>
-        public string header_cdn { get; set; }
-    }
-    public class TLSversion
-    {
-        [System.Text.Json.Serialization.JsonPropertyName("TLSv1")]
-        public bool TLSv1 { get; set; }
-        [System.Text.Json.Serialization.JsonPropertyName("TLSv1.1")]
-        public bool TLSv1_1 { get; set; }
-        [System.Text.Json.Serialization.JsonPropertyName("TLSv1.2")]
-        public bool TLSv1_2 { get; set; }
-        [System.Text.Json.Serialization.JsonPropertyName("TLSv1.3")]
-        public bool TLSv1_3 { get; set; }
-    }
-    public class DefaultWebSite
-    { 
-        public List<sites> sites { get; set; }
-        /// <summary>
-        /// 默认网站，可以是字符串（表示网站名称）或布尔值（false表示无默认网站）
-        /// </summary>
-        public dynamic defaultSite { get; set; }
-    }
-    public class sites
-    {
-        /// <summary>
-        /// 网站名称
-        /// </summary>
-        public string name { get; set; }
-    }
-    public class FileBody 
-    { 
-        /// <summary>
-        /// 文件状态
-        /// </summary>
-        public bool status { get; set; }
-        /// <summary>
-        /// 是否只读
-        /// </summary>
-        public bool only_read { get; set; }
-        /// <summary>
-        /// 文件大小
-        /// </summary>
-        public int size { get; set; }
-        /// <summary>
-        /// 文件编码
-        /// </summary>
-        public string encoding { get; set; }
-        /// <summary>
-        /// 文件内容
-        /// </summary>
-        public string data { get; set; }
-        /// <summary>
-        /// 文件历史版本
-        /// </summary>
-        public List<object>? historys { get; set; }
-        /// <summary>
-        /// 是否自动保存
-        /// </summary>
-        public bool? auto_save { get; set; }
-        /// <summary>
-        /// 文件修改时间
-        /// </summary>
-        public long? st_mtime { get; set; }
-    }
-    /// <summary>
-    /// PhpCli版本
-    /// </summary>
-    public class PhpCliVersion 
-    {
-        /// <summary>
-        /// PhpCli版本选择
-        /// </summary>
-        public Select Select { get; set; }
-        /// <summary>
-        /// PhpCli版本列表
-        /// </summary>
-        public List<versions> versions { get; set; }
-    }
-    /// <summary>
-    /// PhpCli版本选择
-    /// </summary>
-    public class Select
-    {
-        /// <summary>
-        /// 版本号
-        /// </summary>
-        public string version { get; set; }
-        /// <summary>
-        /// 版本名称
-        /// </summary>
-        public string name { get; set; }
-        /// <summary>
-        /// 状态
-        /// </summary>
-        public bool status { get; set; }
-    }
-    /// <summary>
-    /// Php版本列表
-    /// </summary>
-    public class versions
-    {
-        /// <summary>
-        /// 版本号
-        /// </summary>
-        public string version { get; set; }
-        /// <summary>
-        /// 版本名称
-        /// </summary>
-        public string name { get; set; }
-        /// <summary>
-        /// 状态
-        /// </summary>
-        public bool status { get; set; }
-    }
-    /// <summary>
-    /// 网站分类
-    /// </summary>
-    public class Types
-    {
-        /// <summary>
-        /// 分类ID
-        /// </summary>
-        public int id { get; set; }
-        /// <summary>
-        /// 分类名称
-        /// </summary>
-        public string name { get; set; }
     }
 }
+
+
