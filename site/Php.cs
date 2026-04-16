@@ -30,6 +30,8 @@ namespace BtPanelApi.site
             return Convert.ToInt32(result.status) == 1;
         }
 
+        private static int ParseRawInt(string responseBody) => int.Parse(responseBody.Trim().Trim('"'));
+
         /// <summary>
         /// 通用请求执行方法（带返回值），统一处理请求发送、响应解析和异常包装
         /// </summary>
@@ -98,12 +100,13 @@ namespace BtPanelApi.site
         /// 获取文件内容
         /// </summary>
         /// <param name="path">文件路径</param>
+        /// <param name="errorMessagePrefix">错误信息前缀</param>
         /// <returns>文件内容</returns>
         /// <exception cref="Exception">获取文件内容失败</exception>
-        public FileBody GetFileBody(string path) => Execute(
+        public FileBody GetFileBody(string path, string errorMessagePrefix = "获取文件内容失败") => Execute(
             () => SendFiles("GetFileBody", new Dictionary<string, string> { ["path"] = path }),
             ParseObject<FileBody>,
-            "获取文件内容失败");
+            errorMessagePrefix);
 
         /// <summary>
         /// 保存文件内容
@@ -122,18 +125,6 @@ namespace BtPanelApi.site
             }),
             ParseStatus,
             "保存文件内容失败");
-
-        /// <summary>
-        /// 通用获取页面内容方法
-        /// </summary>
-        /// <param name="filePath">文件路径</param>
-        /// <param name="errorMessagePrefix">错误信息前缀</param>
-        /// <returns>文件内容</returns>
-        /// <exception cref="Exception">获取文件内容失败</exception>
-        private FileBody GetPageContent(string filePath, string errorMessagePrefix) => Execute(
-            () => SendFiles("GetFileBody", new Dictionary<string, string> { ["path"] = filePath }),
-            ParseObject<FileBody>,
-            errorMessagePrefix);
 
         /// <summary>
         /// 通用保存页面内容方法
@@ -159,7 +150,7 @@ namespace BtPanelApi.site
         /// </summary>
         /// <returns>默认页面文件内容</returns>
         /// <exception cref="Exception">获取默认页面内容失败</exception>
-        public FileBody GetDefaultPage() => GetPageContent(DefaultPagePath, "获取默认页面内容失败");
+        public FileBody GetDefaultPage() => GetFileBody(DefaultPagePath, "获取默认页面内容失败");
 
         /// <summary>
         /// 设置默认页面内容
@@ -174,7 +165,7 @@ namespace BtPanelApi.site
         /// </summary>
         /// <returns>404页面文件内容</returns>
         /// <exception cref="Exception">获取404页面内容失败</exception>
-        public FileBody Get404Page() => GetPageContent(NotFoundPagePath, "获取404页面内容失败");
+        public FileBody Get404Page() => GetFileBody(NotFoundPagePath, "获取404页面内容失败");
 
         /// <summary>
         /// 设置404页面内容
@@ -208,7 +199,7 @@ namespace BtPanelApi.site
         /// </summary>
         /// <returns>无网站页面文件内容</returns>
         /// <exception cref="Exception">获取无网站页面内容失败</exception>
-        public FileBody GetNoWebSitePage() => GetPageContent(NoWebsitePagePath, "获取无网站页面内容失败");
+        public FileBody GetNoWebSitePage() => GetFileBody(NoWebsitePagePath, "获取无网站页面内容失败");
 
         /// <summary>
         /// 设置无网站页面内容
@@ -224,7 +215,7 @@ namespace BtPanelApi.site
         /// </summary>
         /// <returns>网站停用后提示页面文件内容</returns>
         /// <exception cref="Exception">获取网站停用后提示页面内容失败</exception>
-        public FileBody GetStopPage() => GetPageContent(StopPagePath, "获取网站停用后提示页面内容失败");
+        public FileBody GetStopPage() => GetFileBody(StopPagePath, "获取网站停用后提示页面内容失败");
 
         /// <summary>
         /// 设置网站停用后提示页面内容
@@ -298,6 +289,44 @@ namespace BtPanelApi.site
             () => SendSite("set_ssl_protocol", new Dictionary<string, string> { ["use_protocols"] = string.Join(",", tls) }),
             ParseStatus,
             "设置ssl协议失败");
+        #endregion
+        #region 站点设置
+        /// <summary>
+        /// 获取指定站点的HTTPS端口
+        /// </summary>
+        /// <param name="siteName">站点名称</param>
+        /// <returns>HTTPS端口</returns>
+        /// <exception cref="Exception">获取网站HTTPS端口失败</exception>
+        public int GetHttpsPort(string siteName) => Execute(
+            () => SendData("get_https_port", new Dictionary<string, string> { ["siteName"] = siteName }),
+            ParseRawInt,
+            "获取网站HTTPS端口失败");
+
+        /// <summary>
+        /// 设置指定站点的HTTPS端口
+        /// </summary>
+        /// <param name="siteName">站点名称</param>
+        /// <param name="port">HTTPS端口</param>
+        /// <returns>是否设置成功</returns>
+        /// <exception cref="Exception">设置网站HTTPS端口失败</exception>
+        public bool SetHttpsPort(string siteName, int port) => Execute(
+            () => SendData("set_https_port", new Dictionary<string, string>
+            {
+                ["siteName"] = siteName,
+                ["port"] = port.ToString()
+            }),
+            ParseStatus,
+            "设置网站HTTPS端口失败");
+
+        /// <summary>
+        /// 获取指定站点的伪静态配置文件内容
+        /// </summary>
+        /// <param name="siteName">站点名称</param>
+        /// <returns>伪静态配置文件内容</returns>
+        /// <exception cref="Exception">获取网站伪静态配置失败</exception>
+        public FileBody GetRewriteConfig(string siteName) =>
+            GetFileBody($"/www/server/panel/vhost/rewrite/{siteName}.conf", "获取网站伪静态配置失败");
+
         #endregion
         /// <summary>
         /// 获取cdn ip设置

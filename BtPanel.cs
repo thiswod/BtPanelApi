@@ -90,6 +90,19 @@ namespace BtPanelApi
         /// <returns></returns>
         public HttpRequestClass SendFiles(string action,Dictionary<string,string> Form) => SendRequest("/files", action, Form);
         /// <summary>
+        /// 发送数据请求
+        /// </summary>
+        /// <param name="action">操作</param>
+        /// <returns></returns>
+        public HttpRequestClass SendData(string action) => SendRequest("/data", action);
+        /// <summary>
+        /// 发送数据请求
+        /// </summary>
+        /// <param name="action">操作</param>
+        /// <param name="Form">表单</param>
+        /// <returns></returns>
+        public HttpRequestClass SendData(string action, Dictionary<string, string> Form) => SendRequest("/data", action, Form);
+        /// <summary>
         /// 网站管理 PHP 模块
         /// </summary>
         public Php php => new Php(BtPanel, BtKey);
