@@ -19,7 +19,7 @@ namespace BtPanelApi
         /// <returns></returns>
         public string GetMd5Hash(string Key)
         {
-            var md5 = MD5.Create();
+            using var md5 = MD5.Create();
             var inputBytes = Encoding.ASCII.GetBytes(Key);
             var hashBytes = md5.ComputeHash(inputBytes);
             var sb = new StringBuilder();
@@ -43,65 +43,55 @@ namespace BtPanelApi
             // request_token 的生成规则：md5(request_time + md5(接口密钥))
             var requestToken = GetMd5Hash(requestTime + GetMd5Hash(BtKey));
             // 将鉴权所需的 request_time 写入表单
-            Form.Add("request_time", requestTime);
+            Form["request_time"] = requestTime;
             // 将计算出的签名 request_token 写入表单，供宝塔服务端校验
-            Form.Add("request_token", requestToken);
+            Form["request_token"] = requestToken;
             return Form;
         }
+
         /// <summary>
-        /// 发送配置请求
+        /// 发送请求
         /// </summary>
+        /// <param name="path">接口路径</param>
         /// <param name="action">操作</param>
-        /// <returns></returns>
-        public HttpRequestClass SendConfig(string action)
+        /// <param name="form">表单</param>
+        /// <returns>请求结果</returns>
+        protected HttpRequestClass SendRequest(string path, string action, Dictionary<string, string>? form = null)
         {
             HttpRequestClass http = new HttpRequestClass();
-            http.Open(BtPanel + "/config?action=" + action, HttpMethod.Post);
-            var PostData = CreateForm();
-            http.Send(PostData);
+            http.Open($"{BtPanel}{path}?action={action}", HttpMethod.Post);
+            http.Send(CreateForm(form));
             return http;
         }
         /// <summary>
         /// 发送配置请求
         /// </summary>
         /// <param name="action">操作</param>
+        /// <returns></returns>
+        public HttpRequestClass SendConfig(string action) => SendRequest("/config", action);
+        /// <summary>
+        /// 发送配置请求
+        /// </summary>
+        /// <param name="action">操作</param>
         /// <param name="Form">表单</param>
         /// <returns></returns>
-        public HttpRequestClass SendConfig(string action,Dictionary<string,string> Form)
-        {
-            HttpRequestClass http = new HttpRequestClass();
-            http.Open(BtPanel + "/config?action=" + action, HttpMethod.Post);
-            var PostData = CreateForm(Form);
-            http.Send(PostData);
-            return http;
-        }
+        public HttpRequestClass SendConfig(string action,Dictionary<string,string> Form) => SendRequest("/config", action, Form);
         /// <summary>
         /// 发送文件请求
         /// </summary>
         /// <param name="action">操作</param>
         /// <returns></returns>
-        public HttpRequestClass SendFiles(string action)
-        {
-            HttpRequestClass http = new HttpRequestClass();
-            http.Open(BtPanel + "/files?action=" + action, HttpMethod.Post);
-            var PostData = CreateForm();
-            http.Send(PostData);
-            return http;
-        }
+        public HttpRequestClass SendFiles(string action) => SendRequest("/files", action);
         /// <summary>
         /// 发送文件请求
         /// </summary>
         /// <param name="action">操作</param>
         /// <param name="Form">表单</param>
         /// <returns></returns>
-        public HttpRequestClass SendFiles(string action,Dictionary<string,string> Form)
-        {
-            HttpRequestClass http = new HttpRequestClass();
-            http.Open(BtPanel + "/files?action=" + action, HttpMethod.Post);
-            var PostData = CreateForm(Form);
-            http.Send(PostData);
-            return http;
-        }
+        public HttpRequestClass SendFiles(string action,Dictionary<string,string> Form) => SendRequest("/files", action, Form);
+        /// <summary>
+        /// 网站管理 PHP 模块
+        /// </summary>
         public Php php => new Php(BtPanel, BtKey);
     }
 }

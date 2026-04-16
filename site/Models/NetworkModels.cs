@@ -1,4 +1,4 @@
-namespace BtPanelApi.site
+﻿namespace BtPanelApi.site
 {
     /// <summary>
     /// 网络信息

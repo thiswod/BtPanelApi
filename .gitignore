@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/.continue/mcpServers/new-mcp-server-1.yaml
+/.continue/mcpServers/new-mcp-server.yaml

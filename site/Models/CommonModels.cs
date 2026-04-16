@@ -1,15 +1,33 @@
-namespace BtPanelApi.site
+﻿namespace BtPanelApi.site
 {
     /// <summary>
     /// 创建默认配置文件
     /// </summary>
     public class CreateDefaultConf
     {
+        /// <summary>
+        /// 是否创建 404 页面配置。
+        /// </summary>
         public bool page_404 { get; set; }
+        /// <summary>
+        /// 是否创建默认首页配置。
+        /// </summary>
         public bool page_index { get; set; }
+        /// <summary>
+        /// 是否开启日志切割。
+        /// </summary>
         public bool log_split { get; set; }
+        /// <summary>
+        /// 是否开启 CDN 递归查询。
+        /// </summary>
         public bool cdn_recursive { get; set; }
+        /// <summary>
+        /// 是否启用 CDN IP 设置。
+        /// </summary>
         public bool cdn_ip { get; set; }
+        /// <summary>
+        /// 网站日志保存路径。
+        /// </summary>
         public string log_path { get; set; } = string.Empty;
     }
 
