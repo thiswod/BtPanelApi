@@ -30,6 +30,15 @@ namespace BtPanelApi.site
             return Convert.ToInt32(result.status) == 1;
         }
 
+        /// <summary>
+        /// 通用请求执行方法（带返回值），统一处理请求发送、响应解析和异常包装
+        /// </summary>
+        /// <typeparam name="T">解析后的返回值类型</typeparam>
+        /// <param name="requestFactory">请求工厂方法，用于构造并发送HTTP请求</param>
+        /// <param name="parser">响应体解析方法，用于将响应字符串解析为指定类型</param>
+        /// <param name="errorMessagePrefix">异常信息前缀，用于标识错误来源</param>
+        /// <returns>解析后的响应结果</returns>
+        /// <exception cref="Exception">请求或解析过程中发生错误时抛出，异常信息以<paramref name="errorMessagePrefix"/>开头</exception>
         private T Execute<T>(Func<HttpRequestClass> requestFactory, Func<string, T> parser, string errorMessagePrefix)
         {
             try
@@ -42,6 +51,12 @@ namespace BtPanelApi.site
             }
         }
 
+        /// <summary>
+        /// 通用请求执行方法（无返回值），统一处理请求发送和异常包装
+        /// </summary>
+        /// <param name="requestFactory">请求工厂方法，用于构造并发送HTTP请求</param>
+        /// <param name="errorMessagePrefix">异常信息前缀，用于标识错误来源</param>
+        /// <exception cref="Exception">请求过程中发生错误时抛出，异常信息以<paramref name="errorMessagePrefix"/>开头</exception>
         private void Execute(Func<HttpRequestClass> requestFactory, string errorMessagePrefix)
         {
             try
@@ -290,12 +305,6 @@ namespace BtPanelApi.site
         /// <returns>cdn ip设置</returns>
         /// <exception cref="Exception">获取cdn ip设置失败</exception>
         public CdnIpSettings GetCdnIpSettings() => Execute(() => SendSite("get_cdn_ip_settings"), ParseObject<CdnIpSettings>, "获取cdn ip设置失败");
-
-        /// <summary>
-        /// 创建默认配置文件
-        /// </summary>
-        /// <exception cref="Exception">获取创建默认配置文件失败</exception>
-        public void CreateDefaultConf() => Execute(() => SendSite("create_default_conf"), "创建默认配置文件失败");
 
         /// <summary>
         /// 获取网络信息
