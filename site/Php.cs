@@ -1,4 +1,5 @@
-﻿using WodToolKit.Http;
+using System.Text.Json;
+using WodToolKit.Http;
 using WodToolKit.Json;
 
 namespace BtPanelApi.site
@@ -30,7 +31,11 @@ namespace BtPanelApi.site
             return Convert.ToInt32(result.status) == 1;
         }
 
+        private static bool ParseRawBool(string responseBody) => bool.Parse(responseBody.Trim().Trim('"'));
+
         private static int ParseRawInt(string responseBody) => int.Parse(responseBody.Trim().Trim('"'));
+
+        private static string ParseRawString(string responseBody) => responseBody;
 
         /// <summary>
         /// 通用请求执行方法（带返回值），统一处理请求发送、响应解析和异常包装
@@ -63,7 +68,7 @@ namespace BtPanelApi.site
         {
             try
             {
-                requestFactory();
+                requestFactory().GetResponse();
             }
             catch (Exception ex)
             {
@@ -114,31 +119,13 @@ namespace BtPanelApi.site
         /// <param name="path">文件路径</param>
         /// <param name="data">文件内容</param>
         /// <param name="encoding">文件编码</param>
+        /// <param name="errorMessagePrefix">错误信息前缀</param>
         /// <returns>是否保存成功</returns>
         /// <exception cref="Exception">保存文件内容失败</exception>
-        public bool SaveFileBody(string path, string data, string encoding = "utf-8") => Execute(
+        public bool SaveFileBody(string path, string data, string encoding = "utf-8", string errorMessagePrefix = "保存文件内容失败") => Execute(
             () => SendFiles("SaveFileBody", new Dictionary<string, string>
             {
                 ["path"] = path,
-                ["data"] = data,
-                ["encoding"] = encoding
-            }),
-            ParseStatus,
-            "保存文件内容失败");
-
-        /// <summary>
-        /// 通用保存页面内容方法
-        /// </summary>
-        /// <param name="filePath"></param>
-        /// <param name="data"></param>
-        /// <param name="encoding"></param>
-        /// <param name="errorMessagePrefix"></param>
-        /// <returns></returns>
-        /// <exception cref="Exception">保存文件内容失败</exception>
-        private bool SetPageContent(string filePath, string data, string encoding, string errorMessagePrefix) => Execute(
-            () => SendFiles("SaveFileBody", new Dictionary<string, string>
-            {
-                ["path"] = filePath,
                 ["data"] = data,
                 ["encoding"] = encoding
             }),
@@ -158,7 +145,7 @@ namespace BtPanelApi.site
         /// <param name="data">默认页面文件内容</param>
         /// <returns>是否设置成功</returns>
         /// <exception cref="Exception">设置默认页面内容失败</exception>
-        public bool SetDefaultPage(string data) => SetPageContent(DefaultPagePath, data, "utf-8", "设置默认页面内容失败");
+        public bool SetDefaultPage(string data) => SaveFileBody(DefaultPagePath, data, "utf-8", "设置默认页面内容失败");
 
         /// <summary>
         /// 获取404页面内容
@@ -174,7 +161,7 @@ namespace BtPanelApi.site
         /// <param name="encoding">文件编码</param>
         /// <returns>是否设置成功</returns>
         /// <exception cref="Exception">设置404页面内容失败</exception>
-        public bool Set404Page(string data, string encoding = "utf-8") => SetPageContent(NotFoundPagePath, data, encoding, "设置404页面内容失败");
+        public bool Set404Page(string data, string encoding = "utf-8") => SaveFileBody(NotFoundPagePath, data, encoding, "设置404页面内容失败");
 
         /// <summary>
         /// 获取404页面状态
@@ -208,7 +195,7 @@ namespace BtPanelApi.site
         /// <param name="encoding">文件编码</param>
         /// <returns>是否设置成功</returns>
         /// <exception cref="Exception">设置无网站页面内容失败</exception>
-        public bool SetNoWebSitePage(string data, string encoding = "utf-8") => SetPageContent(NoWebsitePagePath, data, encoding, "设置无网站页面内容失败");
+        public bool SetNoWebSitePage(string data, string encoding = "utf-8") => SaveFileBody(NoWebsitePagePath, data, encoding, "设置无网站页面内容失败");
 
         /// <summary>
         /// 获取网站停用后提示页面内容
@@ -224,7 +211,7 @@ namespace BtPanelApi.site
         /// <param name="encoding">文件编码</param>
         /// <returns>是否设置成功</returns>
         /// <exception cref="Exception">设置网站停用后提示页面内容失败</exception>
-        public bool SetStopPage(string data, string encoding = "utf-8") => SetPageContent(StopPagePath, data, encoding, "设置网站停用后提示页面内容失败");
+        public bool SetStopPage(string data, string encoding = "utf-8") => SaveFileBody(StopPagePath, data, encoding, "设置网站停用后提示页面内容失败");
         #endregion
         #region 默认站点
         /// <summary>
@@ -327,6 +314,166 @@ namespace BtPanelApi.site
         public FileBody GetRewriteConfig(string siteName) =>
             GetFileBody($"/www/server/panel/vhost/rewrite/{siteName}.conf", "获取网站伪静态配置失败");
 
+        /// <summary>
+        /// 获取指定站点的PHP版本信息
+        /// </summary>
+        /// <param name="siteName">站点名称</param>
+        /// <returns>站点PHP版本信息</returns>
+        /// <exception cref="Exception">获取网站PHP版本失败</exception>
+        public SitePhpVersion GetSitePHPVersion(string siteName) => Execute(
+            () => SendSite("GetSitePHPVersion", new Dictionary<string, string> { ["siteName"] = siteName }),
+            ParseObject<SitePhpVersion>,
+            "获取网站PHP版本失败");
+
+        /// <summary>
+        /// 设置指定站点的PHP版本
+        /// </summary>
+        /// <param name="siteName">站点名称</param>
+        /// <param name="version">PHP版本号，如 "81"</param>
+        /// <returns>是否设置成功</returns>
+        /// <exception cref="Exception">设置网站PHP版本失败</exception>
+        public bool SetSitePHPVersion(string siteName, string version) => Execute(
+            () => SendSite("SetPHPVersion", new Dictionary<string, string>
+            {
+                ["siteName"] = siteName,
+                ["version"] = version,
+                ["other"] = string.Empty
+            }),
+            ParseStatus,
+            "设置网站PHP版本失败");
+
+        /// <summary>
+        /// 设置PHP Session隔离状态
+        /// </summary>
+        /// <param name="id">PHP版本ID</param>
+        /// <param name="act">状态值</param>
+        /// <returns>是否设置成功</returns>
+        /// <exception cref="Exception">设置PHP Session隔离状态失败</exception>
+        public bool SetPhpSessionIsolation(int id, int act) => Execute(
+            () => SendConfig("set_php_session_path", new Dictionary<string, string>
+            {
+                ["id"] = id.ToString(),
+                ["act"] = act.ToString()
+            }),
+            ParseStatus,
+            "设置PHP Session隔离状态失败");
+
+        /// <summary>
+        /// 获取PHP Session隔离状态
+        /// </summary>
+        /// <param name="id">PHP版本ID</param>
+        /// <returns>PHP Session隔离状态</returns>
+        /// <exception cref="Exception">获取PHP Session隔离状态失败</exception>
+        public bool GetPhpSessionIsolation(int id) => Execute(
+            () => SendConfig("get_php_session_path", new Dictionary<string, string> { ["id"] = id.ToString() }),
+            ParseRawBool,
+            "获取PHP Session隔离状态失败");
+
+        /// <summary>
+        /// 获取安全告警防护状态概览
+        /// </summary>
+        /// <returns>安全告警防护状态概览</returns>
+        /// <exception cref="Exception">获取安全告警防护状态概览失败</exception>
+        public SecurityNoticeIndex GetSecurityIndex() => Execute(
+            () => SendPlugin("get_index", "security_notice"),
+            ParseObject<SecurityNoticeIndex>,
+            "获取安全告警防护状态概览失败");
+
+        /// <summary>
+        /// 获取所有站点的安全告警防护状态
+        /// </summary>
+        /// <returns>站点安全告警防护状态列表</returns>
+        /// <exception cref="Exception">获取站点安全告警防护状态失败</exception>
+        public SecurityNoticeSites GetSecuritySites() => Execute(
+            () => SendPlugin("get_sites", "security_notice"),
+            ParseObject<SecurityNoticeSites>,
+            "获取站点安全告警防护状态失败");
+
+        /// <summary>
+        /// 开启指定站点的安全告警防护
+        /// </summary>
+        /// <param name="siteName">站点名称</param>
+        /// <returns>是否设置成功</returns>
+        /// <exception cref="Exception">开启站点安全告警防护失败</exception>
+        public bool StartSiteSecurity(string siteName) => Execute(
+            () => SendPlugin("start_site", "security_notice", new Dictionary<string, string> { ["siteName"] = siteName }),
+            ParseStatus,
+            "开启站点安全告警防护失败");
+
+        /// <summary>
+        /// 添加站点到安全告警防护（目录文件读取告警）
+        /// </summary>
+        /// <param name="path">站点路径</param>
+        /// <param name="type">类型（如 dir）</param>
+        /// <param name="domain">域名</param>
+        /// <param name="actions">防护动作（默认 1,0,0,0 开启目录文件读取告警）</param>
+        /// <returns>添加结果</returns>
+        /// <exception cref="Exception">添加站点到安全告警防护失败</exception>
+        public SecurityNoticeAddSiteConfigResponse AddSiteSecurityConfig(string path, string type, string domain, string actions = "1,0,0,0") => Execute(
+            () => SendPlugin("add_site_config", "security_notice", new Dictionary<string, string>
+            {
+                ["path"] = path,
+                ["type"] = type,
+                ["domain"] = domain,
+                ["actions"] = actions
+            }),
+            ParseObject<SecurityNoticeAddSiteConfigResponse>,
+            "添加站点到安全告警防护失败");
+
+        #region 网站安全
+        /// <summary>
+        /// 添加内容监控任务
+        /// </summary>
+        /// <param name="request">内容监控请求参数</param>
+        /// <returns>是否添加成功</returns>
+        /// <exception cref="Exception">添加内容监控任务失败</exception>
+        public bool AddContentMonitorInfo(AddContentMonitorRequest request) => Execute(
+            () => SendRequest("/project/content/add_content_monitor_info", null,
+                new Dictionary<string, string> { ["data"] = JsonSerializer.Serialize(request) }),
+            ParseStatus,
+            "添加内容监控任务失败");
+
+        /// <summary>
+        /// 获取指定站点的内容监控列表
+        /// </summary>
+        /// <param name="siteName">站点名称</param>
+        /// <returns>内容监控列表</returns>
+        /// <exception cref="Exception">获取内容监控列表失败</exception>
+        public List<ContentMonitorInfo> GetSiteContentMonitorList(string siteName) => Execute(
+            () => SendRequest("/project/content/get_single_site_content_monitor_list", null,
+                new Dictionary<string, string> { ["site_name"] = siteName }),
+            ParseObject<List<ContentMonitorInfo>>,
+            "获取内容监控列表失败");
+
+        /// <summary>
+        /// 删除内容监控任务
+        /// </summary>
+        /// <param name="Id">监控ID</param>
+        /// <returns>是否删除成功</returns>
+        /// <exception cref="Exception">删除内容监控任务失败</exception>
+        public bool DelContentMonitorInfo(int Id) => Execute(
+            () => SendRequest("/project/content/del_content_monitor_info", null,
+                new Dictionary<string, string> { ["data"] = JsonSerializer.Serialize(new { id = Id }) }),
+            ParseStatus,
+            "删除内容监控任务失败");
+        #endregion
+        #region 网站日志
+        /// <summary>
+        /// 获取网站日志
+        /// </summary>
+        /// <param name="siteName">站点名称</param>
+        /// <param name="ip_area">是否显示IP地区（0不显示，1显示）</param>
+        /// <returns>网站日志内容</returns>
+        /// <exception cref="Exception">获取网站日志失败</exception>
+        public string GetSiteLogs(string siteName, int ip_area = 0) => Execute(
+            () => SendRequest("/logs/site/GetSiteLogs", null, new Dictionary<string, string>
+            {
+                ["siteName"] = siteName,
+                ["ip_area"] = ip_area.ToString()
+            }),
+            ParseRawString,
+            "获取网站日志失败");
+        #endregion
         #endregion
         /// <summary>
         /// 获取cdn ip设置

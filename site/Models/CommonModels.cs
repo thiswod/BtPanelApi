@@ -1,4 +1,4 @@
-﻿namespace BtPanelApi.site
+namespace BtPanelApi.site
 {
     /// <summary>
     /// 创建默认配置文件
@@ -200,6 +200,222 @@
     }
 
     /// <summary>
+    /// 网站PHP版本信息
+    /// </summary>
+    public class SitePhpVersion
+    {
+        /// <summary>
+        /// PHP版本号，如 "85" 表示 PHP 8.5
+        /// </summary>
+        public string phpversion { get; set; } = string.Empty;
+        /// <summary>
+        /// Tomcat状态，-1 表示未安装
+        /// </summary>
+        public int tomcat { get; set; }
+        /// <summary>
+        /// Tomcat版本，false 表示未安装，字符串表示版本号
+        /// </summary>
+        public dynamic tomcatversion { get; set; } = false;
+        /// <summary>
+        /// Node.js版本，false 表示未安装，字符串表示版本号
+        /// </summary>
+        public dynamic nodejsversion { get; set; } = false;
+        /// <summary>
+        /// 其他PHP版本信息
+        /// </summary>
+        public string php_other { get; set; } = string.Empty;
+    }
+
+    /// <summary>
+    /// 安全告警插件首页信息
+    /// </summary>
+    public class SecurityNoticeIndex
+    {
+        /// <summary>
+        /// PHP版本列表
+        /// </summary>
+        public List<SecurityNoticePhpVersion> php_versions { get; set; } = [];
+        /// <summary>
+        /// 总数
+        /// </summary>
+        public int total { get; set; }
+        /// <summary>
+        /// 安全时间
+        /// </summary>
+        public int safe_time { get; set; }
+    }
+
+    /// <summary>
+    /// 安全告警插件中的PHP版本项
+    /// </summary>
+    public class SecurityNoticePhpVersion
+    {
+        /// <summary>
+        /// 完整版本号
+        /// </summary>
+        public string version { get; set; } = string.Empty;
+        /// <summary>
+        /// 简短版本号
+        /// </summary>
+        public string v { get; set; } = string.Empty;
+        /// <summary>
+        /// 攻击测试命令
+        /// </summary>
+        public string attack { get; set; } = string.Empty;
+        /// <summary>
+        /// 防护模块状态
+        /// </summary>
+        public int state { get; set; }
+        /// <summary>
+        /// 站点数量
+        /// </summary>
+        public int site_count { get; set; }
+    }
+
+    /// <summary>
+    /// 安全告警插件站点列表
+    /// </summary>
+    public class SecurityNoticeSites
+    {
+        /// <summary>
+        /// 总数
+        /// </summary>
+        public int total { get; set; }
+        /// <summary>
+        /// 安全时间
+        /// </summary>
+        public int safe_time { get; set; }
+        /// <summary>
+        /// 站点列表
+        /// </summary>
+        public List<SecurityNoticeSite> sites { get; set; } = [];
+    }
+
+    /// <summary>
+    /// 安全告警插件站点项
+    /// </summary>
+    public class SecurityNoticeSite
+    {
+        /// <summary>
+        /// 站点路径
+        /// </summary>
+        public string path { get; set; } = string.Empty;
+        /// <summary>
+        /// 是否开启
+        /// </summary>
+        public bool open { get; set; }
+        /// <summary>
+        /// 站点名称
+        /// </summary>
+        public string site_name { get; set; } = string.Empty;
+        /// <summary>
+        /// 是否停用
+        /// </summary>
+        public int is_stop { get; set; }
+        /// <summary>
+        /// PHP版本
+        /// </summary>
+        public string version { get; set; } = string.Empty;
+        /// <summary>
+        /// 统计信息
+        /// </summary>
+        public SecurityNoticeSiteTotal total { get; set; } = new();
+        /// <summary>
+        /// 配置信息
+        /// </summary>
+        public SecurityNoticeSiteConfig config { get; set; } = new();
+        /// <summary>
+        /// 站点防护信息
+        /// </summary>
+        public SecurityNoticeSiteInfo site_info { get; set; } = new();
+    }
+
+    /// <summary>
+    /// 安全告警插件站点统计信息
+    /// </summary>
+    public class SecurityNoticeSiteTotal
+    {
+        /// <summary>
+        /// 总数
+        /// </summary>
+        public int total { get; set; }
+        /// <summary>
+        /// 当日总数
+        /// </summary>
+        public int day_total { get; set; }
+    }
+
+    /// <summary>
+    /// 安全告警插件站点配置
+    /// </summary>
+    public class SecurityNoticeSiteConfig
+    {
+        /// <summary>
+        /// 文件信息
+        /// </summary>
+        public Dictionary<string, object> file_info { get; set; } = new();
+    }
+
+    /// <summary>
+    /// 安全告警插件站点防护信息
+    /// </summary>
+    public class SecurityNoticeSiteInfo
+    {
+        /// <summary>
+        /// 是否开启
+        /// </summary>
+        public string open { get; set; } = string.Empty;
+        /// <summary>
+        /// SQL防护
+        /// </summary>
+        public string sql { get; set; } = string.Empty;
+        /// <summary>
+        /// 上传防护
+        /// </summary>
+        public string upload { get; set; } = string.Empty;
+        /// <summary>
+        /// Open_basedir防护
+        /// </summary>
+        public string open_basedir { get; set; } = string.Empty;
+        /// <summary>
+        /// SSRF防护
+        /// </summary>
+        public string ssrf { get; set; } = string.Empty;
+        /// <summary>
+        /// WebShell防护
+        /// </summary>
+        public string webshell { get; set; } = string.Empty;
+        /// <summary>
+        /// XSS防护
+        /// </summary>
+        public string xss { get; set; } = string.Empty;
+        /// <summary>
+        /// CSRF防护
+        /// </summary>
+        public string csrf { get; set; } = string.Empty;
+        /// <summary>
+        /// RCE防护
+        /// </summary>
+        public string rce { get; set; } = string.Empty;
+        /// <summary>
+        /// 执行防护
+        /// </summary>
+        public string execution { get; set; } = string.Empty;
+        /// <summary>
+        /// 下载防护
+        /// </summary>
+        public string download { get; set; } = string.Empty;
+        /// <summary>
+        /// 写入防护
+        /// </summary>
+        public string write { get; set; } = string.Empty;
+        /// <summary>
+        /// 包含防护
+        /// </summary>
+        public string include { get; set; } = string.Empty;
+    }
+
+    /// <summary>
     /// 网站分类
     /// </summary>
     public class Types
@@ -212,5 +428,220 @@
         /// 分类名称
         /// </summary>
         public string name { get; set; } = string.Empty;
+    }
+
+    /// <summary>
+    /// 安全告警添加站点配置响应
+    /// </summary>
+    public class SecurityNoticeAddSiteConfigResponse
+    {
+        /// <summary>
+        /// 是否成功
+        /// </summary>
+        public bool status { get; set; }
+        /// <summary>
+        /// 消息
+        /// </summary>
+        public string msg { get; set; } = string.Empty;
+    }
+
+    /// <summary>
+    /// 扫描配置
+    /// </summary>
+    public class ScanConfig
+    {
+        /// <summary>
+        /// 扫描参数
+        /// </summary>
+        public bool scan_args { get; set; }
+        /// <summary>
+        /// 标题
+        /// </summary>
+        public bool title { get; set; }
+        /// <summary>
+        /// 关键词
+        /// </summary>
+        public bool keywords { get; set; }
+        /// <summary>
+        /// 描述
+        /// </summary>
+        public bool descriptions { get; set; }
+        /// <summary>
+        /// 标题哈希
+        /// </summary>
+        public bool title_hash { get; set; }
+        /// <summary>
+        /// 尾部哈希
+        /// </summary>
+        public bool tail_hash { get; set; }
+        /// <summary>
+        /// 搜索监控
+        /// </summary>
+        public bool search_monitor { get; set; }
+        /// <summary>
+        /// 扫描UA
+        /// </summary>
+        public string scan_ua { get; set; } = string.Empty;
+        /// <summary>
+        /// 词库
+        /// </summary>
+        public int thesaurus { get; set; }
+    }
+
+    /// <summary>
+    /// 定时任务信息
+    /// </summary>
+    public class CrontabInfo
+    {
+        /// <summary>
+        /// 任务ID
+        /// </summary>
+        public int id { get; set; }
+        /// <summary>
+        /// 任务名称
+        /// </summary>
+        public string name { get; set; } = string.Empty;
+        /// <summary>
+        /// 执行周期类型
+        /// </summary>
+        public string type { get; set; } = string.Empty;
+        /// <summary>
+        /// 执行小时
+        /// </summary>
+        public int where_hour { get; set; }
+        /// <summary>
+        /// 执行分钟
+        /// </summary>
+        public int where_minute { get; set; }
+        /// <summary>
+        /// 添加时间
+        /// </summary>
+        public string addtime { get; set; } = string.Empty;
+        /// <summary>
+        /// 状态
+        /// </summary>
+        public int status { get; set; }
+        /// <summary>
+        /// 执行脚本
+        /// </summary>
+        public string sBody { get; set; } = string.Empty;
+        /// <summary>
+        /// 循环描述
+        /// </summary>
+        public string cycle { get; set; } = string.Empty;
+    }
+
+    /// <summary>
+    /// 内容监控信息
+    /// </summary>
+    public class ContentMonitorInfo
+    {
+        /// <summary>
+        /// 监控ID
+        /// </summary>
+        public int id { get; set; }
+        /// <summary>
+        /// 监控名称
+        /// </summary>
+        public string name { get; set; } = string.Empty;
+        /// <summary>
+        /// 监控方法
+        /// </summary>
+        public int method { get; set; }
+        /// <summary>
+        /// 站点名称
+        /// </summary>
+        public string site_name { get; set; } = string.Empty;
+        /// <summary>
+        /// 监控URL
+        /// </summary>
+        public string url { get; set; } = string.Empty;
+        /// <summary>
+        /// 创建时间
+        /// </summary>
+        public int time { get; set; }
+        /// <summary>
+        /// 是否本地
+        /// </summary>
+        public int is_local { get; set; }
+        /// <summary>
+        /// 发送消息
+        /// </summary>
+        public int send_msg { get; set; }
+        /// <summary>
+        /// 定时任务ID
+        /// </summary>
+        public int cron_id { get; set; }
+        /// <summary>
+        /// 扫描配置
+        /// </summary>
+        public ScanConfig scan_config { get; set; } = new();
+        /// <summary>
+        /// 定时任务状态
+        /// </summary>
+        public int crontab_status { get; set; }
+        /// <summary>
+        /// 定时任务信息
+        /// </summary>
+        public CrontabInfo crontab_info { get; set; } = new();
+        /// <summary>
+        /// 最后扫描时间
+        /// </summary>
+        public List<object> last_scan_time { get; set; } = [];
+        /// <summary>
+        /// 测试ID
+        /// </summary>
+        public string testing_id { get; set; } = string.Empty;
+        /// <summary>
+        /// 最后风险数量
+        /// </summary>
+        public int last_risk_count { get; set; }
+    }
+
+    /// <summary>
+    /// 添加内容监控请求
+    /// </summary>
+    public class AddContentMonitorRequest
+    {
+        /// <summary>
+        /// 监控名称
+        /// </summary>
+        public string name { get; set; } = string.Empty;
+        /// <summary>
+        /// 监控方法
+        /// </summary>
+        public int method { get; set; }
+        /// <summary>
+        /// 站点名称
+        /// </summary>
+        public string site_name { get; set; } = string.Empty;
+        /// <summary>
+        /// 监控URL
+        /// </summary>
+        public string url { get; set; } = string.Empty;
+        /// <summary>
+        /// 发送消息
+        /// </summary>
+        public int send_msg { get; set; }
+        /// <summary>
+        /// 执行周期
+        /// </summary>
+        public string type { get; set; } = string.Empty;
+        /// <summary>
+        /// 执行小时
+        /// </summary>
+        public int hour { get; set; }
+        /// <summary>
+        /// 执行分钟
+        /// </summary>
+        public int minute { get; set; }
+        /// <summary>
+        /// 监控ID
+        /// </summary>
+        public string id { get; set; } = string.Empty;
+        /// <summary>
+        /// 扫描配置
+        /// </summary>
+        public ScanConfig scan_config { get; set; } = new();
     }
 }
